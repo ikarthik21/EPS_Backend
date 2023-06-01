@@ -1,5 +1,9 @@
 import UserRegister from '../models/UserSchema.js';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
+
 
 
 
@@ -42,28 +46,36 @@ const UserController = () => {
         },
         async login(req, res) {
 
+
             const { lemail, lpassword } = req.body;
             const user = UserRegister.findOne({ email: lemail }).then(result => {
 
-                console.log(result.password);
+                const userid = result._id.toHexString();
+
                 bcrypt.compare(lpassword, result.password, (err, result) => {
                     if (result) {
 
+                        // Generate a JWT.
+                        const token = jwt.sign({
+                            username: userid,
+                        }, process.env.TOKEN_SECRET);
 
-                    } 
+                        // Send the JWT to the user.
+                        res.json({
+                            token: token
+                        });
+
+
+                    }
                     else {
 
-                        return res.json({ message: " <h3> Wrong Username or Password </h3> 😓" });  
+                        return res.json({ message: " <h3> Wrong Username or Password </h3> 😓" });
 
                     }
                 });
 
 
             });
-
-
-
-
 
         }
 

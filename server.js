@@ -3,16 +3,17 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 dotenv.config();
+import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 const PORT = process.env.PORT || 3100;
 const app = express();
 import router from './routes/routes.js';
 
-
-
+ 
 app.use(cors());
 app.use(bodyParser.json({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser()); 
 
 
 // Mongo Connection //
