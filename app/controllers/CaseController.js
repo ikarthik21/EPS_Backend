@@ -10,7 +10,7 @@ const CaseController = () => {
 
         async addcase(req, res) {
 
-            const { caseid, invid, cname, cnotes, cdesc } = req.body;
+            const { caseid, invid, cname, cnotes, cdesc, Files } = req.body;
 
 
             const Case = await CaseRegister.findOne({ caseid: caseid });
@@ -21,7 +21,7 @@ const CaseController = () => {
             else {
 
                 const CaseDetails = await new CaseRegister({
-                    caseid, invid, cname, cnotes, cdesc
+                    caseid, invid, cname, cnotes, cdesc, Files
                 })
 
                 try {
@@ -44,7 +44,7 @@ const CaseController = () => {
 
 
                 if (Case) {
-                  
+
 
                     return res.json(Case);
 

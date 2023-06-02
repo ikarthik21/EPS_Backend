@@ -26,6 +26,9 @@ const CaseSchema = new mongoose.Schema({
     cdesc: {
         type: String,
         required: true
+    },
+    Files: {
+        type: Array
     }
 
 }, { timestamps: true });
