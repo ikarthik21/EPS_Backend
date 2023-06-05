@@ -49,15 +49,22 @@ const UserController = () => {
 
             const { lemail, lpassword } = req.body;
             const user = UserRegister.findOne({ email: lemail }).then(result => {
+                
+                const user_role= result.role;
+          
 
+             
                 const userid = result._id.toHexString();
 
                 bcrypt.compare(lpassword, result.password, (err, result) => {
+                 
                     if (result) {
 
+                            
                         // Generate a JWT.
                         const token = jwt.sign({
                             username: userid,
+                            role: user_role
                         }, process.env.TOKEN_SECRET);
 
                         // Send the JWT to the user.

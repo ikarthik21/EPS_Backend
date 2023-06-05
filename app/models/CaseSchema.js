@@ -27,9 +27,26 @@ const CaseSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    Files: {
+    fileNames: {
         type: Array
-    }
+    },
+
+    fileSizes: {
+        type: Array
+    },
+
+    fileTypes: {
+        type: Array
+    },
+
+    ipfsPaths: {
+        type: Array
+    },
+
+    uploadTimes: {
+        type: Array
+    },
+
 
 }, { timestamps: true });
 

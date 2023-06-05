@@ -2,6 +2,7 @@ import express from 'express';
 import UserController from '../app/controllers/UserController.js';
 import CaseController from '../app/controllers/CaseController.js';
 import Auth from '../app/middlewares/Auth.js';
+import Admin from '../app/middlewares/Admin.js';
 const router = express.Router();
 
 
@@ -20,6 +21,7 @@ router.post('/login', UserController().login);
 
 // New Case Route
 router.post('/addcase', CaseController().addcase);
+router.post('/editcase', CaseController().editcase);
 
 
 // Get all Records 
@@ -28,11 +30,11 @@ router.post('/addcase', CaseController().addcase);
 router.get('/getrec', CaseController().allrec);
 
 
-router.get('/dummy', Auth, (req, res, next) => {
+router.get('/dummy', Admin, (req, res, next) => {
 
 
-
-    return res.json({ message: " <h3> Dummy works fine  </h3> 😓" });
+     console.log("good success");
+    return res.json({ message: " <h3> Dummy works fine  </h3> " });
 
 });
 
