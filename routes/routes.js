@@ -25,17 +25,24 @@ router.post('/editcase', CaseController().editcase);
 
 
 // Get all Records 
-
-
 router.get('/getrec', CaseController().allrec);
 
 
-router.get('/dummy', Admin, (req, res, next) => {
+// Admin Routes 
+
+// All users route
+router.get('/users',  UserController().getUsers);
+
+//approve User
+router.post('/approveuser',  UserController().approveUser);
 
 
-     console.log("good success");
-    return res.json({ message: " <h3> Dummy works fine  </h3> " });
+// router.get('/dummy', Admin, (req, res, next) => {
 
-});
+
+//      console.log("good success");
+//     return res.json({ message: " <h3> Dummy works fine  </h3> " });
+
+// });
 
 export default router;
