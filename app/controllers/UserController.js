@@ -14,66 +14,50 @@ const UserController = () => {
 
             const { name, ilnumber, mobile, email, password } = req.body;
 
-
-
-
             const user = await UserRegister.findOne({ email: email });
 
             if (user) {
                 return res.status(200).json({ message: "<h3>User already exists 🙄</h3>" });
-            }
-            else {
-                const User = await new UserRegister({
-                    name: name,
-                    ilnumber: ilnumber,
-                    mobile: mobile,
-                    email: email,
-                    password: password
-                })
-
+            } else {
                 try {
-                    const registered = await User.save().then((resp) => {
-                        return res.json({ message: " <h3> User Added wait for Admin Approval 😊 </h3> " });
+                    const hashedPassword = await bcrypt.hash(password, 10);
+
+                    const newUser = new UserRegister({
+                        name: name,
+                        ilnumber: ilnumber,
+                        mobile: mobile,
+                        email: email,
+                        password: hashedPassword
                     });
 
+                    const registeredUser = await newUser.save();
+                    return res.json({ message: " <h3> User Added, wait for Admin Approval 😊 </h3> " });
                 } catch (err) {
                     console.log(err);
                     return res.json({ message: " <h3> Error in adding the User </h3> 😓" });
                 }
-
             }
 
         },
+
         async login(req, res) {
-
-
             const { lemail, lpassword } = req.body;
             const user = await UserRegister.findOne({ email: lemail });
 
-
             if (user) {
-
-
-
                 if (user.verified !== "true") {
-                    // Handle the error
                     return res.json({ message: '<h3>Ask Admin to approve and try again </h3>' });
                 }
 
                 const user_role = user.role;
                 const userid = user._id.toHexString();
 
+                try {
+                    const rslt = await bcrypt.compare(lpassword, user.password);
 
-                bcrypt.compare(lpassword, user.password, (err, rslt) => {
-
-                    if (err) {
-                        // Handle the error
-                        return res.status(500).json({ message: 'Internal Server Error' });
-                    }
+              
 
                     if (rslt) {
-
-                        // Passwords match, generate JWT
                         const token = jwt.sign(
                             {
                                 username: userid,
@@ -82,67 +66,15 @@ const UserController = () => {
                             process.env.TOKEN_SECRET
                         );
 
-                        // Send the JWT to the user
                         return res.json({ token });
-                    }
-                    else {
-                        // Passwords do not match
+                    } else {
                         return res.json({ message: '<h3> Wrong Username or Password </h3> 😓' });
-
                     }
-
-
-                });
-
-
-
-
-                // const user = UserRegister.findOne({ email: lemail }).then(result => {
-
-
-                //     const user_role = result.role;
-                //     const userid = result._id.toHexString();
-
-
-                //     bcrypt.compare(lpassword, result.password, (err, rslt) => {
-
-                //         if (err) {
-                //             // Handle the error
-                //             return res.status(500).json({ message: 'Internal Server Error' });
-                //         }
-
-                //         if (rslt) {
-
-                //             // Passwords match, generate JWT
-                //             const token = jwt.sign(
-                //                 {
-                //                     username: userid,
-                //                     role: user_role
-                //                 },
-                //                 process.env.TOKEN_SECRET
-                //             );
-
-                //             // Send the JWT to the user
-                //             return res.json({ token });
-                //         }
-                //         else {
-                //             // Passwords do not match
-                //             return res.json({ message: '<h3> Wrong Username or Password </h3> 😓' });
-                //         }
-                //     });
-
-
-
-
-
-
-
-                // });
-
-
+                } catch (err) {
+                    return res.status(500).json({ message: 'Internal Server Error' });
+                }
             } else {
-                return res.json({ message: '<h3> User Doesn`t Exists </h3> ' });
-
+                return res.json({ message: '<h3> User Doesn\'t Exist </h3> ' });
             }
         },
         async getUsers(req, res) {
